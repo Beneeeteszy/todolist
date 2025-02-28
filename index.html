@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimpleTask Web</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .container {
+      padding: 20px;
+    }
+    .section {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SimpleTask Web</h1>
+    
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button id="tasksTab">Tasks</button>
+      <button id="signupTab">Sign Up</button>
+      <button id="loginTab">Log In</button>
+    </div>
+
+    <!-- Task Management Section (index.html) -->
+    <div id="tasksSection" class="section">
+      <div class="input-section">
+        <input type="text" id="taskInput" placeholder="Enter a new task...">
+        <select id="taskCategory">
+          <option value="Personal">Personal</option>
+          <option value="Work">Work</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="date" id="taskDueDate">
+        <button id="addTaskBtn">Add Task</button>
+      </div>
+      <div class="filters">
+        <button id="filterAll">All</button>
+        <button id="filterCompleted">Completed</button>
+        <button id="filterPersonal">Personal</button>
+        <button id="filterWork">Work</button>
+        <button id="filterShopping">Shopping</button>
+        <button id="filterOther">Other</button>
+      </div>
+      <div class="task-count">
+        <span>Total Tasks: <span id="totalTasks">0</span></span>
+        <span>Completed: <span id="completedTasks">0</span></span>
+      </div>
+      <ul id="taskList"></ul>
+      <button id="clearAllBtn">Clear All Tasks</button>
+    </div>
+
+    <!-- Sign Up Section (signup.html) -->
+    <div id="signupSection" class="section">
+      <h1>Sign Up</h1>
+      <form id="signupForm">
+        <div class="input-section">
+          <input type="text" id="username" placeholder="Choose a username" required>
+          <input type="email" id="email" placeholder="Enter your email" required>
+          <input type="password" id="password" placeholder="Choose a password" required>
+          <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+        </div>
+        <button type="submit" id="signupBtn">Sign Up</button>
+      </form>
+      <p>Already have an account? <a href="javascript:void(0);" id="goToLogin">Log in here</a></p>
+    </div>
+
+    <!-- Log In Section (login.html) -->
+    <div id="loginSection" class="section">
+      <h1>Log In</h1>
+      <form id="loginForm">
+        <div class="input-section">
+          <input type="text" id="loginUsername" placeholder="Username" required>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+        </div>
+        <button type="submit" id="loginBtn">Log In</button>
+      </form>
+      <p>Don't have an account? <a href="javascript:void(0);" id="goToSignup">Sign up here</a></p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Tab switching logic
+    document.getElementById('tasksTab').addEventListener('click', function() {
+      // Only allow access to tasks if user is logged in
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        document.getElementById('tasksSection').classList.add('active');
+        document.getElementById('signupSection').classList.remove('active');
+        document.getElementById('loginSection').classList.remove('active');
+      } else {
+        alert("Please log in first.");
+        document.getElementById('loginTab').click(); // Go to login if not logged in
+      }
+    });
+
+    document.getElementById('signupTab').addEventListener('click', function() {
+      document.getElementById('signupSection').classList.add('active');
+      document.getElementById('tasksSection').classList.remove('active');
+      document.getElementById('loginSection').classList.remove('active');
+    });
+
+    document.getElementById('loginTab').addEventListener('click', function() {
+      document.getElementById('loginSection').classList.add('active');
+      document.getElementById('tasksSection').classList.remove('active');
+      document.getElementById('signupSection').classList.remove('active');
+    });
+
+    // Sign Up Form Submission
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      // Store user info in localStorage (simplified)
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('username', document.getElementById('username').value);
+      alert("Sign up successful! You are now logged in.");
+      document.getElementById('tasksTab').click(); // Switch to Tasks section
+    });
+
+    // Log In Form Submission
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      // Check credentials (simplified)
+      const storedUsername = localStorage.getItem('username');
+      const storedPassword = localStorage.getItem('password');
+      const inputUsername = document.getElementById('loginUsername').value;
+      const inputPassword = document.getElementById('loginPassword').value;
+
+      if (inputUsername === storedUsername && inputPassword === storedPassword) {
+        localStorage.setItem('isLoggedIn', 'true');
+        alert("Log in successful!");
+        document.getElementById('tasksTab').click(); // Switch to Tasks section
+      } else {
+        alert("Invalid credentials. Please try again.");
+      }
+    });
+
+    // Switch to Login from Sign Up
+    document.getElementById('goToLogin').addEventListener('click', function() {
+      document.getElementById('loginTab').click();
+    });
+
+    // Switch to Sign Up from Log In
+    document.getElementById('goToSignup').addEventListener('click', function() {
+      document.getElementById('signupTab').click();
+    });
+
+    // On page load, check if user is logged in
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      document.getElementById('tasksTab').click(); // Show tasks if logged in
+    } else {
+      document.getElementById('loginTab').click(); // Show login by default if not logged in
+    }
+  </script>
+</body>
+</html>
